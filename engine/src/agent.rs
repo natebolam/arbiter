@@ -102,9 +102,8 @@ impl AgentBuilder {
     /// # Parameters
     ///
     /// - `engine`: The state machine engine to be added to the agent builder.
-    ///   This engine must
-    ///   implement the `StateMachine` trait and is expected to be provided as a
-    ///   boxed trait object to allow for dynamic dispatch.
+    ///   This engine must implement the `StateMachine` trait and is expected to
+    ///   be provided as a boxed trait object to allow for dynamic dispatch.
     ///
     /// # Returns
     ///

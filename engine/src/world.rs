@@ -63,15 +63,13 @@ impl World {
     /// # Type Parameters
     ///
     /// - `C`: The type of the behavior component that each agent will be
-    ///   associated with.
-    ///   This type must implement the `CreateStateMachine`, `Serialize`,
-    ///   `DeserializeOwned`, and `Debug` traits.
+    ///   associated with. This type must implement the `CreateStateMachine`,
+    ///   `Serialize`, `DeserializeOwned`, and `Debug` traits.
     ///
     /// # Arguments
     ///
     /// - `config_path`: A string slice that holds the path to the configuration
-    ///   file
-    ///   relative to the current working directory.
+    ///   file relative to the current working directory.
     ///
     /// # Panics
     ///
@@ -80,8 +78,7 @@ impl World {
     /// - The configuration file specified by `config_path` cannot be opened.
     /// - The configuration file cannot be read into a string.
     /// - The contents of the configuration file cannot be deserialized into the
-    ///   expected
-    ///   `HashMap<String, Vec<C>>` format.
+    ///   expected `HashMap<String, Vec<C>>` format.
     ///
     /// # Examples
     ///
