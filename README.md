@@ -2,19 +2,20 @@
 
 > Expanding the EVM tooling ecosystem.
 
-![Github Actions](https://github.com/primitivefinance/arbiter/workflows/test/badge.svg)
+![Github Actions](https://github.com/anthias-labs/arbiter/workflows/test/badge.svg)
 ![Visitors badge](https://visitor-badge.laobi.icu/badge?page_id=arbiter)
 ![Telegram badge](https://img.shields.io/endpoint?color=neon&logo=telegram&label=chat&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Farbiter_rs)
 [![Twitter Badge](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://x.com/anthiasxyz)
 
 ## Overview
-**Arbiter** is a blazing-fast Ethereum sandbox that lets developers orchestrate event-driven simulations.
-The framework allows for fine-grained control over a (Rust) Ethereum Virtual Machine (EVM) to provide stateful Ethereum smart-contract interactions and the creation of behaviors that can be coalesced into complex scenarios or automation. 
-We use [`ethers-rs`](https://github.com/gakonst/ethers-rs) middleware on top of [revm](https://github.com/bluealloy/revm), which is used in ETH clients such as [`reth`](https://github.com/paradigmxyz/reth) as well as [`foundry`](https://github.com/foundry-rs/foundry).
-This gives us speed, configurability, and modularity that feels like a lightweight custom Ethereum node. 
+> **Arbiter** is a blazing-fast Ethereum sandbox that lets developers orchestrate event-driven simulations.
 
-The primary use of Arbiter is to probe the mechanism security of smart contracts.
-If this interests you, please see the [Vulnerability Corpus](https://primitivefinance.github.io/arbiter/vulnerability_corpus.html).
+Arbiter allows for fine-grained control over a (Rust) Ethereum Virtual Machine (EVM) to provide stateful Ethereum smart-contract interactions and the creation of behaviors that can be coalesced into complex scenarios or automation. As such, Arbiter enables robust and granular simulation to be conducted.
+We use an [`ethers-rs`](https://github.com/gakonst/ethers-rs) middleware on top of [revm](https://github.com/bluealloy/revm), which is used in ETH clients such as [`reth`](https://github.com/paradigmxyz/reth) as well as [`foundry`](https://github.com/foundry-rs/foundry).
+This enables speed, configurability, and modularity that feels like a lightweight custom Ethereum node. 
+
+The primary use of Arbiter is to probe the mechanism security of smart contracts, and perform advanced economic modelling.
+If mechanism security interests you, please see the [Vulnerability Corpus](https://anthias-labs.github.io/arbiter/vulnerability_corpus.html).
 
 ---
 
@@ -27,13 +28,13 @@ The Arbiter workspace has five crates:
 
 
 ## Book
-Here you can find the [Arbiter Documentation](https://primitivefinance.github.io/arbiter/).
-This is an mdbook that provides higher level understanding of how to use the entirety of the Arbiter framework.
+Here you can find the [Arbiter Documentation](https://anthias-labs.github.io/arbiter/).
+This book highlights some key Arbiter usage patterns and explains all key functionality.
 
 ## Motivation 
-Arbiter was built to allow you to work with smart contracts in a stateful sandbox and design agents that can be used alongside the contracts.
+Arbiter was built to allow you to work with smart contracts in a stateful sandbox and thus design agents that can be used alongside the contracts.
 This gives you many capabilities.
-For instance, smart contract engineers must test their contracts against various potentially adversarial environments and parameters and not rely on static stateless testing. 
+For instance, smart contract engineers must test their contracts against various potentially adversarial environments and parameters instead of relying on static and stateless testing.
 
 In Decentralized Finance (DeFi), a wide array of complex decentralized applications can use the testing described above. Still, implicit financial strategies also encompass many agents and parameterizations. 
 A financial engineer may want to test their strategies against thousands of market conditions, contract settings, shocks, and autonomous or random AI agents while ensuring their approach isn't vulnerable to bytecode-level exploits.
@@ -51,7 +52,7 @@ cargo install cargo-generate
 We have an example that will run what we have set up in a template.
 To run this, you can clone the repository and update the submodules:
 ```bash
-git clone https://github.com/primitivefinance/arbiter.git
+git clone https://github.com/anthias-labs/arbiter.git
 cd arbiter
 git submodule update --init --recursive
 ```
@@ -68,10 +69,10 @@ cargo run --example template simulate examples/template/configs/example.toml -vv
 This sets the log level to `debug` so you can see what's happening internally.
 
 ### Initialization
-To create your own Arbiter project off of our template [arbiter-template](https://github.com/primitivefinance/arbiter-template), you can run the following:
+To create your own Arbiter project off of our template [arbiter-template](https://github.com/anthias-labs/arbiter-template), you can run the following:
 ```bash
 cd <your/chosen/directory>
-cargo generate https://github.com/primitivefinance/arbiter-template.git
+cargo generate https://github.com/anthias-labs/arbiter-template.git
 ```
 You'll be prompted to provide a project name, and the rest will be set up for you!
 
@@ -174,4 +175,4 @@ cargo test --all --all-features
 
 ## Contributing
 
-See our [Contributing Guidelines](https://github.com/primitivefinance/arbiter/blob/main/.github/CONTRIBUTING.md)
+See our [Contributing Guidelines](https://github.com/anthias-labs/arbiter/blob/main/.github/CONTRIBUTING.md)
