@@ -2,7 +2,7 @@
 
 We have a few examples to help you get started with Arbiter. These examples are designed to be simple and easy to understand. They are also designed to be easy to run and modify. We hope you find them helpful!
 
-Our examples are in the [examples](https://github.com/primitivefinance/arbiter/tree/main/examples) directory. There are two examples: one for building a simulation and one fork forking the mainnet state.
+Our examples are in the [examples](https://github.com/anthias-labs/arbiter/tree/main/examples) directory. There are two examples: one for building a simulation and one fork forking the mainnet state.
 
 ## Simulation
 
@@ -12,9 +12,9 @@ You can run them with the following command:
 cargo run --example project simulate examples/project/configs/example.toml
 ```
 
-This will run the minimal counter-simulation. The simulation is very minimal and is designed to be easy to understand. It uses an arbiter main macro to derive the `incrementer` behavior for a single agent. Our design philosophy is that the users of Arbiter should only need to define behaviors and a configuration toml for the behaviors. You can see how the behaviors were represented in this simulation in the [behaviors](https://github.com/primitivefinance/arbiter/tree/main/examples/project/behaviors) module. We implement a single behavior for the incrementer struct that deploys the counter on startup and then on the increment event will increment the count. 
+This will run the minimal counter-simulation. The simulation is very minimal and is designed to be easy to understand. It uses an arbiter main macro to derive the `incrementer` behavior for a single agent. Our design philosophy is that the users of Arbiter should only need to define behaviors and a configuration toml for the behaviors. You can see how the behaviors were represented in this simulation in the [behaviors](https://github.com/anthias-labs/arbiter/tree/main/examples/project/behaviors) module. We implement a single behavior for the incrementer struct that deploys the counter on startup and then on the increment event will increment the count. 
 
-For more information on the behavior trait please see the section on [behaviors](https://primitivefinance.github.io/arbiter/usage/arbiter_engine/behaviors.html)
+For more information on the behavior trait please see the section on [behaviors](https://anthias-labs.github.io/arbiter/usage/arbiter_engine/behaviors.html)
 
 
 ## Forking

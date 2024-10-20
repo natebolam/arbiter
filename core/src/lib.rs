@@ -22,7 +22,7 @@
 //!   and provide optimal performance.
 //!
 //! For a detailed guide on getting started, check out the
-//! [Arbiter Github page](https://github.com/primitivefinance/arbiter/).
+//! [Arbiter Github page](https://github.com/amthias-labs/arbiter/).
 //!
 //! For specific module-level information and examples, navigate to the
 //! respective module documentation below.

@@ -12,10 +12,10 @@
 //! - [`Environment`]: Represents the Ethereum execution environment, allowing
 //!   for its management (e.g., starting, stopping) and interfacing with agents.
 //! - [`EnvironmentParameters`]: Parameters necessary for creating or modifying
-//!  an [`Environment`].
+//!   an [`Environment`].
 //! - [`Instruction`]: Enum indicating the type of instruction that is being
 //!   sent
-//!  to the EVM.
+//!   to the EVM.
 
 use std::thread::{self, JoinHandle};
 
@@ -59,15 +59,15 @@ pub(crate) type OutcomeReceiver = Receiver<Result<Outcome, ArbiterCoreError>>;
 ///
 /// ## Features
 /// * [`revm::Evm`] and its connections to the "outside world" (agents) via the
-/// [`Socket`] provide the [`Environment`] a means to route and execute
-/// transactions.
+///   [`Socket`] provide the [`Environment`] a means to route and execute
+///   transactions.
 /// * [`ArbiterDB`] is the database structure used that allows for read-only
-/// sharing of execution and write-only via the main thread. This can also be a
-/// database read in from disk storage via [`database::fork::Fork`].
+///   sharing of execution and write-only via the main thread. This can also be a
+///   database read in from disk storage via [`database::fork::Fork`].
 /// * [`ArbiterInspector`] is an that allows for the EVM to be able to display
-/// logs and properly handle gas payments.
+///   logs and properly handle gas payments.
 /// * [`EnvironmentParameters`] are used to set the gas limit, contract size
-/// limit, and label for the [`Environment`].
+///   limit, and label for the [`Environment`].
 #[derive(Debug)]
 pub struct Environment {
     /// The label used to define the [`Environment`].
@@ -695,7 +695,7 @@ pub enum Broadcast {
 /// * `input` - The U256 to convert.
 /// # Returns
 /// * `Ok(U64)` - The converted U64.
-/// Used for block number which is a U64.
+///   Used for block number which is a U64.
 #[inline]
 fn convert_uint_to_u64(input: U256) -> Result<U64, ArbiterCoreError> {
     let as_str = input.to_string();

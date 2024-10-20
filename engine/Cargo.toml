@@ -11,8 +11,8 @@ license = "Apache-2.0"
 keywords = ["ethereum", "evm", "emulator", "testing", "smart-contracts"]
 readme = "../README.md"
 documentation = "https://docs.rs/arbiter-engine"
-homepage = "https://github.com/primitivefinance/arbiter"
-repository = "https://github.com/primitivefinance/arbiter"
+homepage = "https://github.com/anthias-labs/arbiter"
+repository = "https://github.com/anthias-labs/arbiter"
 
 [dependencies]
 arbiter-bindings.workspace = true

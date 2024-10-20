@@ -15,10 +15,10 @@ use super::*;
 /// - [`Instruction::SetGasPrice`],
 /// - [`Instruction::Stop`],
 /// - [`Instruction::Transaction`],
-
+///
 /// The [`Instruction`]s are sent to the [`Environment`] via the
-/// [`Socket::instruction_sender`] and the results are received via the
-/// [`crate::middleware::Connection::outcome_receiver`].
+///   [`Socket::instruction_sender`] and the results are received via the
+///   [`crate::middleware::Connection::outcome_receiver`].
 #[derive(Debug, Clone)]
 pub(crate) enum Instruction {
     /// An `AddAccount` is used to add a default/unfunded account to the
