@@ -2,179 +2,172 @@
 
 > Expanding the EVM tooling ecosystem.
 
-![Github Actions](https://github.com/primitivefinance/arbiter/workflows/test/badge.svg)
-[![Codecov badge](https://codecov.io/gh/primitivefinance/arbiter/branch/main/graph/badge.svg?token=UQ1SE0D9IN)](https://codecov.io/gh/primitivefinance/arbiter)
+![Github Actions](https://github.com/anthias-labs/arbiter/workflows/test/badge.svg)
 ![Visitors badge](https://visitor-badge.laobi.icu/badge?page_id=arbiter)
 ![Telegram badge](https://img.shields.io/endpoint?color=neon&logo=telegram&label=chat&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Farbiter_rs)
-[![Discord badge](https://dcbadge.vercel.app/api/server/primitive?style=flat)](https://discord.gg/primitive)
-[![Twitter Badge](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://twitter.com/primitivefi)
-
-**Arbiter** is a framework for stateful Ethereum smart-contract simulation. 
-The framework features an [`ethers-rs`](https://github.com/gakonst/ethers-rs) middleware built on top of [revm](https://github.com/bluealloy/revm) which allows the end user to interact with a sandboxed `revm` instance as if it were an Ethereum node. 
-This provides a familiar interface for interacting with the Ethereum Virtual Machine (EVM), but with unrivaled speed. 
-Furthermore, Arbiter provides containment and management for simulations. For a running list of vulnerabilities found with Arbiter, please see the [Vulnerability Corpu](vulnerability_corpus.md)
+[![Twitter Badge](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://x.com/anthiasxyz)
 
 ## Overview
+> **Arbiter** is a blazing-fast Ethereum sandbox that lets developers orchestrate event-driven simulations.
 
-The Arbiter workspace has three crates:
-- `arbiter`: The binary crate that exposes a command line interface for initializing simulations via a templated repository and generating contract bindings needed for the simulation.
-- `arbiter-core`: The lib crate that contains the core logic for the Arbiter framework including the `RevmMiddleware` discussed before, the `Environment` which envelopes simulations, and the `Manager` who controls a collection of environments.
-- `arbiter-derive`: The lib crate that contains custom derive macros for more succinct simulation building.
+Arbiter allows for fine-grained control over a (Rust) Ethereum Virtual Machine (EVM) to provide stateful Ethereum smart-contract interactions and the creation of behaviors that can be coalesced into complex scenarios or automation. As such, Arbiter enables robust and granular simulation to be conducted.
+We use an [`ethers-rs`](https://github.com/gakonst/ethers-rs) middleware on top of [revm](https://github.com/bluealloy/revm), which is used in ETH clients such as [`reth`](https://github.com/paradigmxyz/reth) as well as [`foundry`](https://github.com/foundry-rs/foundry).
+This enables speed, configurability, and modularity that feels like a lightweight custom Ethereum node. 
 
-The purpose of Arbiter is to provide a toolset to construct arbitrary agents (defined in Rust, by smart contracts, or even other FFI) and have these agents interact with an Ethereum-like environment of your design. 
-All contract bytecode is run directly using a blazing-fast EVM instance `revm` (which is used in live RPC nodes such as [`reth`](https://github.com/paradigmxyz/reth)) so that your contracts are tested in the exact same type of environment that they are deployed in.
+The primary use of Arbiter is to probe the mechanism security of smart contracts, and perform advanced economic modelling.
+If mechanism security interests you, please see the [Vulnerability Corpus](https://anthias-labs.github.io/arbiter/vulnerability_corpus.html).
+
+---
+
+The Arbiter workspace has five crates:
+- `arbiter`: The bin that exposes a command line interface for forking and binding contracts.
+- `arbiter-core`: A lib containing the core logic for the Arbiter framework, including the `ArbiterMiddleware` discussed before, and the `Environment`, our sandbox.
+- `arbiter-engine`: A lib that provides abstractions for building simulations, agents, and behaviors.
+- `arbiter-macros`: A lib crate that contains the macros used to simplify development with Arbiter.
+- `arbiter-bindings`: A lib crate containing bindings for utility smart contracts used for testing and development.
+
+
+## Book
+Here you can find the [Arbiter Documentation](https://anthias-labs.github.io/arbiter/).
+This book highlights some key Arbiter usage patterns and explains all key functionality.
 
 ## Motivation 
+Arbiter was built to allow you to work with smart contracts in a stateful sandbox and thus design agents that can be used alongside the contracts.
+This gives you many capabilities.
+For instance, smart contract engineers must test their contracts against various potentially adversarial environments and parameters instead of relying on static and stateless testing.
 
-Smart contract engineers need to test their contracts against a wide array of potentially adversarial environments and contract parameters. 
-The static stateless testing of contracts can only take you so far. 
-To truly test the security of a contract, you need to test it against a wide array of dynamic environments that encompass the externalities of Ethereum mainnet. 
-We wanted to do just that with Arbiter. 
+In Decentralized Finance (DeFi), a wide array of complex decentralized applications can use the testing described above. Still, implicit financial strategies also encompass many agents and parameterizations. 
+A financial engineer may want to test their strategies against thousands of market conditions, contract settings, shocks, and autonomous or random AI agents while ensuring their approach isn't vulnerable to bytecode-level exploits.
+Likewise, the same engineer may want to develop searcher agents, solver agents, or other autonomous agents that can be run on the blockchain.
 
-Both smart contract and financial engineers come together in Decentralized Finance (DeFi) to build and deploy a wide array of complex decentralized applications as well as fincancial strategies respectively. 
-For the latter, a financial engineer may want to test their strategies against thousands of market conditions, contract settings, shocks, and autonomous or random or even AI agents all while making sure their strategy isn't vulnerable to bytecode-level exploits.
-
-To configure such a rich simulation environment on a test or local network is also possible with Arbiter by a change in choice of middleware. 
-The most efficient choice for getting robust, yet quick, simulations would bypass any networking and use a low level language's implementation of the EVM. 
-Furthermore, we can gain control over the EVM worldstate by working directly on `revm`.
-We would like the user to have a choice in how they want to simulate their contracts and Arbiter provides that choice.
-
-### Sim Driven Development and Strategization 
-
-Test driven development is a popular engineering practice to write tests first, which fail, and implement logic to get the test to eventually pass. 
-With simulation driven development, it's possible to build "tests" that can only pass if the *incentives* actually work. For example, a sim driven test might be `is_loan_liquidated`, and a simulation must be made for a liquidator agent to do the liquidation. 
-This approach significantly improves the testing of economic systems and other mechanism designs, which is important in the world of networks that are mostly incentive driven.
-
-The same goes with developing strategies that one would like to deploy on a live Ethereum network. 
-One can use Arbiter to simulate their strategy with an intended goal and see if it actually works. 
-This is especially important in the world of DeFi where strategies are often a mix of on and offchain and are susceptible to exploits.
-
-## Installation
-
-To install Arbiter, you will need to have Rust installed on your machine. 
+## Working with the Arbiter Framework
+To work with Arbiter, you must have Rust installed on your machine. 
 You can install Rust by following the instructions [here](https://www.rust-lang.org/tools/install). 
-Once you have Rust installed, you can install Arbiter by running the following commands:
+It will also be helpful to get the `cargo-generate` package, which you can install by doing:
+```bash
+cargo install cargo-generate
+```
 
+### Examples
+We have an example that will run what we have set up in a template.
+To run this, you can clone the repository and update the submodules:
+```bash
+git clone https://github.com/anthias-labs/arbiter.git
+cd arbiter
+git submodule update --init --recursive
+```
+From here, you can now try running the following from the clone's root directory:
+```bash
+cargo run --example template 
+```
+This command will enter the template CLI and show you the commands and flags.
+
+To run the `ModifiedCounter.sol` example and see some logging, try:
+```bash
+cargo run --example template simulate examples/template/configs/example.toml -vvv
+```
+This sets the log level to `debug` so you can see what's happening internally.
+
+### Initialization
+To create your own Arbiter project off of our template [arbiter-template](https://github.com/anthias-labs/arbiter-template), you can run the following:
+```bash
+cd <your/chosen/directory>
+cargo generate https://github.com/anthias-labs/arbiter-template.git
+```
+You'll be prompted to provide a project name, and the rest will be set up for you!
+
+### Binary
+To install the Arbiter binary, run:
 ```bash
 cargo install arbiter
 ```
-This will install the Arbiter binary on your machine. You can then run `arbiter --help` to see that Arbiter was installed properly as well as see the help menu.
-
-## Command Line Interface 
-
-The Arbiter binary provides a CLI for creating new project much like [Foundry](https://github.com/foundry-rs/foundry), which Arbiter aims to work alongside with. 
-It also gives you the abilities to fork a state of an EVM network and store it to disk so that you can use this fork in a simulation.
-
-### Initialization 
-To create a new project, you should have Foundry installed.
-You can find the installation [here](https://getfoundry.sh/). 
-To create a new Arbiter project, you can run:
-
-```bash
-arbiter init your-project-name
-cd your-project-name
-```
-
-This initializes a new Arbiter project with a template. You can generate the bindings again by running:
-
-```bash
-arbiter bind
-```
-
-The template is executable at this point and you can run it by running:
-```bash
-cargo run
-```
-
-**Optional Arguments**
-
-You can run `arbiter init <simulation_name> --no-git` to remove the `.git` directory from the template upon initialization.
-
+This will install the Arbiter binary on your machine. You can then run `arbiter --help` to see that Arbiter was correctly installed and see the help menu.
 
 ### Bindings
-You can load or write your own smart contracts in the templates `contracts/` directory and begin writing your own simulations. 
-Arbiter treats Rust smart-contract bindings as first-class citizens. The contract bindings are generated via Foundry's `forge` command. 
-`arbiter bind` wraps `forge` with some convenience features that will generate all your bindings to src/bindings as a rust module. 
-[Foundry](https://github.com/foundry-rs/foundry) power-users are welcome to use `forge` directly.
-
+You can load or write your own smart contracts in the `contracts/` directory of your templated project and begin writing your own simulations. 
+Arbiter treats Rust smart-contract bindings as first-class citizens. 
+The contract bindings are generated via Foundry's `forge` command. 
+`arbiter bind` wraps `forge` with convenience features that generate all your bindings to `src/bindings` as a Rust module. 
+[Foundry](https://github.com/foundry-rs/foundry) power-users can use `forge` directly.
 
 ### Forking
-
 To fork a state of an EVM network, you must first create a fork config file.
-An example is provided in the `example_fork` directory.
-Essentially, you provide your storage location for the data, the network you want the block number you want, and metadata about the contracts you want to fork.
+An example is provided in the `examples/fork` directory.
+Essentially, you provide your storage location for the data, the network you want, the block number you want, and metadata about the contracts you want to fork.
 
 ```bash
 arbiter fork <fork_config.toml>
 ```
+This will create a fork of the network you specified in the config file and store it in your specified location.
+It can then be loaded into an `arbiter-core` `Environment` using the `Fork::from_disk()` method.
 
-This will create a fork of the network you specified in the config file and store it in the location you specified.
-It can then be loaded into an `arbiter-core` `Environment` by using the `Fork::from_disk()` method.
-
-Forking is done this way to make sure that all emulation done does not require a constant connection to an RPC-endpoint.
+Forking is done this way to ensure that all emulation does not require a constant connection to an RPC endpoint.
+You may find that [Anvil](https://book.getfoundry.sh/anvil/) has a more accessible forking interface. However, an online forking mechanism makes RPC calls to update the state as necessary.
+Arbiter `Environment` forking is for creating a state, storing it locally, and being able to initialize a simulation from that state when desired.
+We plan to allow `arbiter-engine` to integrate with other network types, such as Anvil, in the future!
 
 **Optional Arguments** 
 You can run `arbiter fork <fork_config.toml> --overwrite` to overwrite the fork if it already exists.
 
+## Cargo Docs
 
-### Optional Arguments
+To see the Cargo docs for the Arbiter crates, please visit the following:
+- [`arbiter`](https://docs.rs/crate/arbiter/)
+- [`arbiter-bindings`](https://docs.rs/crate/arbiter-bindings/)
+- [`arbiter-core`](https://docs.rs/arbiter-core/)
+- [`arbiter-macros`](https://docs.rs/arbiter-macros/)
+- [`arbiter-engine`](https://docs.rs/arbiter-engine/)
 
-You can run `arbiter init <simulation_name> --no-git` to remove the `.git` directory from the template upon initialization.
-
-
-## Documentation
-
-To see the documentation for the Arbiter crates, please visit the following:
-- [`arbiter`](https://docs.rs/crate/arbiter/0.3.2/)
-- [`arbiter-core`](https://docs.rs/arbiter-core/0.5.1/arbiter_core/)
-- [`arbiter-derive`](https://docs.rs/arbiter-derive/0.1.0/arbiter_derive/)
-
-You will also find each of these on crates.io.
+You will find each of these on crates.io.
 
 ## Benchmarks
+In `arbiter-core`, we have a a small benchmarking suite that compares the `ArbiterMiddleware` implementation over the `Environment` to the [Anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil) local testnet chain implementation.
+The biggest reasons we chose to build Arbiter was to gain more control over the EVM environment and to have a more robust simulation framework. Still, we also wanted to gain speed, so we chose to build our own interface over `revm` instead of using Anvil (which uses `revm` under the hood). 
+For the following, Anvil was set to mine blocks for each transaction instead of setting an enforced block time. The `Environment` was configured with a block rate of 10.0.
+Preliminary benchmarks of the `ArbiterMiddleware` interface over `revm` against Anvil are given in the following table.
 
-In `arbiter-core`, we have a a small benchmarking suite that compares the `RevmMiddleware` implementation over the `Environment` to the [Anvil](https://github.com/foundry-rs/foundry/tree/master/crates/anvil) local testnet chain implementation.
-The biggest reasons why we chose to build Arbiter was to gain more control over the EVM environment and to have a more robust simulation framework, but we also wanted to gain in speed which is why we chose to build our own interface over `revm` as opposed to using Anvil (which does use `revm` under the hood). 
-For the following, Anvil was set to mine blocks for each transaction as opposed to setting an enforced block time and the `Environment` was set with a block rate of 10.0 (this was chosen somewhat arbitrarily as we will add in more block control in the future).
-Preliminary benchmarks of the `RevmMiddleware` interface over `revm` against Anvil are given in the following table.
+To run the benchmarking code yourself, you can run:
+```bash
+cargo bench --package arbiter-core
+```
 
-| Operation       |  RevmMiddlwware |    Anvil     | Relative Difference |
+| Operation       |  ArbiterMiddleware |    Anvil     | Relative Difference |
 |-----------------|-----------------|--------------|---------------------|
-| Deploy          | 241.819µs       | 8.215446ms   | ~33.97x             |
-| Lookup          | 480.319µs       | 13.052063ms  | ~27.17x             |
-| Stateless Call  | 4.03235ms       | 10.238771ms  | ~2.53x              |
-| Stateful Call   | 843.296µs       | 153.102478ms | ~181.55x            |
+| Deploy          | 238.975µs       | 7712.436µs   | ~32.2729x           |
+| Lookup          | 565.617µs       | 17880.124µs  | ~31.6117x           |
+| Stateless Call  | 1402.524µs      | 10397.55µs   | ~7.413456x          |
+| Stateful Call   | 2043.88µs       | 154553.225µs | ~75.61756x          |
+
 
 The above can be described by:
 - Deploy: Deploying a contract to the EVM. 
-We deployed both `ArbiterToken` and `ArbiterMath` in this method, so you can divide the time by two to get an estimate for the time it takes to deploy a single contract.
+In this method, we deployed both `ArbiterToken` and `ArbiterMath`, so you can divide the time by two to estimate the time it takes to deploy a single contract.
 
-- Lookup: Looking up a the `balanceOf` for a client's address for `ArbiterToken`.
-We called `ArbiterToken`'s `balanceOf` function 100 times in this method.
-Divide by 100 to get the time it takes to lookup a single balance.
+- Lookup: Look up the `balanceOf` for a client's address for `ArbiterToken`.
+In this method, we called `ArbiterToken`'s `balanceOf` function 100 times.
+Divide by 100 to get the time to look up a single balance.
 
 - Stateless Call: Calling a contract that does not mutate state. 
-We called `ArbiterMath`'s `cdf` function 100 times in this method.
-Divide by 100 to get the time it takes to call a single stateless function.
+In this method, we called `ArbiterMath`'s `cdf` function 100 times.
+Divide by 100 to get the time to call a single stateless function.
 
 - Stateful Call: Calling a contract that mutates state. 
-We called `ArbiterToken`'s `mint` function 100 times in this call.
-Divide by 100 to get the time it takes to call a single stateful function.
+In this call, we called `ArbiterToken`'s `mint` function 100 times.
+Divide by 100 to get the time to call a single stateful function.
 
-The benchmarking code can be found in the `arbiter-core/benches/` directory and these specific times were achieved over a 1000 run average. 
-The above was achieved running `cargo bench --package arbiter-core` which will automatically run with the release profile.
-Times were achieved on an Apple Macbook Pro M1 Max with 8 performance and 2 efficiency cores, and with 32GB of RAM.
+The benchmarking code can be found in the `arbiter-core/benches/` directory, and these specific times were achieved over a 1000 run average. 
+The above was achieved by running `cargo bench --package arbiter-core`, which will automatically run with the release profile.
+Times were achieved on an Apple Macbook Pro M1 Max with 8 performance and 2 efficiency cores and 32GB of RAM.
 
-Of course, the use cases of Anvil and the `RevmMiddleware` can be different. 
-Anvil represents a more realistic environment with networking and mining, while the `RevmMiddleware` is simpler environment with the bare essentials to running stateful simulations.
-Anvil also mines blocks for each transaction, while the `RevmMiddleware` does not.
-We hope to improve our API to allow the end user to be able to interface with their own choice of EVM environment to suit what ever their needs may be!
+Of course, the use cases of Anvil and the `ArbiterMiddleware` can be different. 
+Anvil represents a more realistic environment with networking and mining. At the same time, the `ArbiterMiddleware` is a simpler environment with the bare essentials to running stateful simulations.
+Anvil also mines blocks for each transaction, while the `ArbiterMiddleware` does not.
 
-Please let us know if you find any issues with these benchmarks or if you have any suggestions on how to improve them!
+Please let us know if you need any help with these benchmarks or suggestions for improving them!
 
 ## Testing
 
-If you contribute please write tests for any new code you write, To run the tests, you can run:
+If you contribute, please write tests for any new code you write. To run the tests, you can run the following:
 
 ```bash
 cargo test --all --all-features
@@ -182,4 +175,4 @@ cargo test --all --all-features
 
 ## Contributing
 
-See our [Contributing Guidelines](https://github.com/primitivefinance/arbiter/blob/main/.github/CONTRIBUTING.md)
+See our [Contributing Guidelines](https://github.com/anthias-labs/arbiter/blob/main/.github/CONTRIBUTING.md)

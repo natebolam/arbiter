@@ -1,19 +1,18 @@
 #![warn(missing_docs)]
 
-use std::{collections::HashMap, env, fs, io::Write, path::Path, sync::Arc};
+use std::{collections::HashMap, io::Write, sync::Arc};
 
-use arbiter_core::environment::fork::*;
-use config::{Config, ConfigError};
+use arbiter_core::database::fork::*;
 use ethers::{
     providers::{Http, Provider},
     types::{Address, BlockId, BlockNumber, U256},
     utils::{hex, keccak256},
 };
 use revm::{
-    db::{ethersdb::EthersDB, CacheDB, EmptyDB},
+    db::{ethersdb::EthersDB, in_memory_db::CacheDB, EmptyDB, EmptyDBTyped},
     Database,
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::*;
 
@@ -37,6 +36,7 @@ impl ForkConfig {
     pub(crate) fn new(fork_config_path: &str) -> Result<Self, ConfigError> {
         let mut cwd = env::current_dir().unwrap();
         cwd.push(fork_config_path);
+        println!("Reading config from: {:?}", cwd.to_str().unwrap());
         let config = Config::builder()
             .add_source(config::File::with_name(
                 cwd.to_str()
@@ -64,7 +64,7 @@ impl ForkConfig {
     pub(crate) fn digest_config(&self) -> Result<CacheDB<EmptyDB>, ArbiterError> {
         // Spawn the `EthersDB` and the `CacheDB` we will write to.
         let ethers_db = &mut self.spawn_ethers_db()?;
-        let mut db = CacheDB::new(EmptyDB::default());
+        let mut db = CacheDB::new(EmptyDBTyped::default());
         for contract_data in self.contracts_meta.values() {
             let address = contract_data.address;
             let info = ethers_db
@@ -108,7 +108,6 @@ impl ForkConfig {
     pub(crate) fn into_fork(self) -> Result<Fork, ArbiterError> {
         // Digest all of the contracts and their storage data listed in the fork config.
         let db = self.digest_config()?;
-
         Ok(Fork {
             db,
             contracts_meta: self.contracts_meta.clone(),

@@ -3,25 +3,12 @@ name: test
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - "arbiter-bindings/*"
 
 jobs:
   test:
     name: test
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.72.0
-          override: true
-
-      - name: test
-        run: cargo test --all --all-features
-        
-  codecov:
-    name: codecov
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,16 +17,5 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      
-      - name: install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-
-      - name: codecov
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-        
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: lcov.info
-          yml: .github/codecov.yml
-          fail_ci_if_error: true
+      - name: test
+        run: cargo test --workspace --all-features
